@@ -11,6 +11,21 @@ loop: send messages + tool definitions → model responds with either text
 or a tool call → you execute the tool → you feed the result back → repeat.
 Understanding this by hand means frameworks won't feel like magic later.
 
+## What we built
+A minimal tool-calling agent using the raw OpenAI API (via OpenRouter) with two tools:
+
+1. **`calculator`** — Safely evaluates arithmetic expressions (e.g. `4821 * 17`)
+2. **`word_count`** — Counts words in a given text
+
+![Agent in action](Agent.png)
+
+### How it works
+1. Tools are defined as Python functions
+2. Tools are described to the model via JSON schemas
+3. The model decides whether to answer directly or call a tool
+4. If a tool is called, we execute it and send the result back
+5. The model uses the result to form its final answer
+
 ## Tasks
 1. Copy `.env.example` to `.env` in the repo root and add your OpenRouter
    API key (free tier: https://openrouter.ai/).
@@ -25,14 +40,22 @@ Understanding this by hand means frameworks won't feel like magic later.
    `reverse_string`, or a simple `whois_lookup` stub). This is the real
    exercise — don't skip it.
 
-## Notes
-Write your own notes/observations here as you go:
+## Running
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r shared/requirements.txt
+echo 'OPENROUTER_API_KEY=your-key' > .env
+python agent.py
+```
 
-- What surprised you about how tool calling works?
-- Where did the model choose *not* to use a tool when you expected it to?
+## Notes
+
+- Tool calling is straightforward — you define the function, describe it in JSON schema, and the model picks when to use it.
+- The model correctly chose `calculator` for math and `word_count` for counting words.
 
 ## Done when
-- [ ] `.env` configured and agent runs
-- [ ] Agent successfully calls the calculator tool
-- [ ] You've added a second custom tool
-- [ ] Notes above filled in
+- [x] `.env` configured and agent runs
+- [x] Agent successfully calls the calculator tool
+- [x] Added a second custom tool (`word_count`)
+- [x] Notes above filled in
